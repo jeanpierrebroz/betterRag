@@ -5,12 +5,10 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List
 import uvicorn
-from langchain.document_loaders import PyPDFLoader, TextLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
+from dotenv import dotenv_values
+
+
+
 
 app = FastAPI()
 
@@ -21,6 +19,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 documents = []
 vector_store = None
 qa_chain = None
+
+config = dotenv_values()
+
 
 class Query(BaseModel):
     question: str
@@ -40,23 +41,8 @@ async def upload_file(file: UploadFile = File(...)):
 
 @app.post("/index")
 async def index_documents():
-    global vector_store, qa_chain
     try:
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        texts = []
-        for doc in documents:
-            if doc.endswith('.pdf'):
-                loader = PyPDFLoader(doc)
-            else:
-                loader = TextLoader(doc)
-            texts.extend(loader.load_and_split(text_splitter))
 
-        embeddings = OpenAIEmbeddings()
-        vector_store = FAISS.from_documents(texts, embeddings)
-        
-        llm = OpenAI()
-        qa_chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=vector_store.as_retriever())
-        
         return {"message": "Documents indexed successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
