@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Upload and Indexing</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Document Upload and Indexing</h1>
+        <form id="upload-form">
+            <input type="file" id="file-input" accept=".txt,.pdf" multiple>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="file-list"></div>
+        <button id="index-button" disabled>Index Documents</button>
+        <div id="status"></div>
+        <a href="/query" id="query-link" style="display: none;">Go to Query Page</a>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>
+
